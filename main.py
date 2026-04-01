@@ -85,7 +85,8 @@ async def upload_csv(
 @app.post("/api/load-demo-data")
 def load_demo_data(db: Session = Depends(database.get_db), current_user: models.User = Depends(auth.get_current_user)):
     # Clear existing data so we don't multiply records 
-    db.query(models.ReferralRecord).delete()
+    db.query(models.Production).delete()
+    db.query(models.Patient).delete()
     db.query(models.ReferringDoctor).delete()
     db.commit()
 
@@ -147,26 +148,8 @@ def get_referral_trends(
 ):
     return analytics.get_referral_trends(db)
 
-# Mount frontend (Foolproof Auto-Search)
+# Mount frontend
 from fastapi.staticfiles import StaticFiles
-import os
-
-possible_paths = [
-    os.path.dirname(__file__), # Tries the current folder
-    os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), # Tries the parent folder
-    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend')) # Tries a frontend folder
-]
-
-frontend_path = None
-for p in possible_paths:
-    if os.path.exists(os.path.join(p, 'index.html')):
-        frontend_path = p
-        break
-
-if frontend_path:
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+if os.path.exists(frontend_path):
     app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
-else:
-    @app.get("/")
-    def read_root():
-        return {"error": "CRITICAL: Could not find index.html. Files are missing from GitHub!"}
-
