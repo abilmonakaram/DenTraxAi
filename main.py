@@ -149,6 +149,6 @@ def get_referral_trends(
 
 # Mount frontend
 from fastapi.staticfiles import StaticFiles
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
-if os.path.exists(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
