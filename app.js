@@ -202,6 +202,42 @@ document.getElementById('csvUpload').addEventListener('change', async (e) => {
     }
 });
 
+// Load Demo Data Handler
+document.getElementById('loadDemoBtn')?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    btn.disabled = true;
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/load-demo-data', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        if (response.ok) {
+            alert("Demo data loaded! The dashboard will now automatically update.");
+            await fetchData();
+        } else {
+            const err = await response.json();
+            alert("Failed to load demo data: " + (err.detail || "Unknown error"));
+        }
+    } catch(error) {
+        console.error(error);
+        alert("Upload failed due to network error.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldHtml;
+    }
+});
+
 // Logout Handler
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
     localStorage.removeItem('token');
