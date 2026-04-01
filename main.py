@@ -147,8 +147,26 @@ def get_referral_trends(
 ):
     return analytics.get_referral_trends(db)
 
-# Mount frontend
+# Mount frontend (Foolproof Auto-Search)
 from fastapi.staticfiles import StaticFiles
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+import os
+
+possible_paths = [
+    os.path.dirname(__file__), # Tries the current folder
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), # Tries the parent folder
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend')) # Tries a frontend folder
+]
+
+frontend_path = None
+for p in possible_paths:
+    if os.path.exists(os.path.join(p, 'index.html')):
+        frontend_path = p
+        break
+
+if frontend_path:
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+else:
+    @app.get("/")
+    def read_root():
+        return {"error": "CRITICAL: Could not find index.html. Files are missing from GitHub!"}
 
