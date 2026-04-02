@@ -148,8 +148,18 @@ def get_referral_trends(
 ):
     return analytics.get_referral_trends(db)
 
-# Mount frontend
+# Mount frontend (Foolproof Path)
 from fastapi.staticfiles import StaticFiles
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
-if os.path.exists(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+import os
+
+# Exactly pinpoint the folder no matter where GitHub put the files
+current_dir = os.path.abspath(".")
+
+if os.path.exists(os.path.join(current_dir, "index.html")):
+    frontend_path = current_dir
+elif os.path.exists(os.path.join(current_dir, "frontend", "index.html")):
+    frontend_path = os.path.join(current_dir, "frontend")
+else:
+    frontend_path = os.path.abspath(os.path.join(current_dir, ".."))
+
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
