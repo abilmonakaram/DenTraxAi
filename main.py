@@ -122,8 +122,19 @@ def get_referral_trends(
 ):
     return analytics.get_referral_trends(db)
 
-# Mount frontend
-from fastapi.staticfiles import StaticFiles
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
-if os.path.exists(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+# Serve frontend directly from the same folder
+from fastapi.responses import FileResponse
+
+BASE_DIR = os.path.dirname(__file__)
+
+@app.get("/")
+def serve_index():
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+
+@app.get("/app.js")
+def serve_js():
+    return FileResponse(os.path.join(BASE_DIR, "app.js"))
+
+@app.get("/styles.css")
+def serve_css():
+    return FileResponse(os.path.join(BASE_DIR, "styles.css"))

@@ -1,10 +1,9 @@
 :root {
-    --primary: #4F46E5;
-    --primary-hover: #4338CA;
-    --secondary: #10B981;
+    --primary-hover: yellow;
+    --secondary: #e7f0ed;
     --danger: #EF4444;
     --warning: #F59E0B;
-    --background: #F8FAFC;
+    --background: #aacef2;
     --card-bg: #FFFFFF;
     --text-main: #0F172A;
     --text-muted: #64748B;
