@@ -12,11 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <script>
-        if (!localStorage.getItem('token')) {
-            window.location.href = 'login.html';
-        }
-    </script>
+
     <div class="dashboard">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -46,13 +42,10 @@
         <main class="main-content">
             <header>
                 <div>
-                    <h1>Welcome, Marketing Specialist</h1>
+                    <h1>Marketing Dashboard</h1>
                     <p class="subtitle">Here's an automated look at your referral trends for this month.</p>
                 </div>
-                <div class="user-profile" style="display:flex; align-items:center; gap:15px;">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Profile">
-                    <button id="logoutBtn" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
+
             </header>
 
             <!-- KPI Cards -->

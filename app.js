@@ -1,18 +1,9 @@
 async function fetchData() {
-    const token = localStorage.getItem('token');
-    if(!token) return window.location.href = 'login.html';
-    const headers = { 'Authorization': `Bearer ${token}` };
     try {
         const [trendsRes, topRes] = await Promise.all([
-            fetch('/api/analytics/trends', { headers }).catch(() => null),
-            fetch('/api/analytics/top-referrers', { headers }).catch(() => null)
+            fetch('/api/analytics/trends').catch(() => null),
+            fetch('/api/analytics/top-referrers').catch(() => null)
         ]);
-        
-        if (trendsRes && trendsRes.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'login.html';
-            return;
-        }
 
         const trends = trendsRes && trendsRes.ok ? await trendsRes.json() : [];
         const top = topRes && topRes.ok ? await topRes.json() : [];
@@ -118,15 +109,8 @@ function generateAIInsight() {
     
     setTimeout(async () => {
         try {
-            const token = localStorage.getItem('token');
-            const headers = { 'Authorization': `Bearer ${token}` };
-            const res = await fetch('/api/analytics/trends', { headers });
+            const res = await fetch('/api/analytics/trends');
             
-            if (res.status === 401) {
-                localStorage.removeItem('token');
-                window.location.href = 'login.html';
-                return;
-            }
             if (!res.ok) throw new Error();
             const trends = await res.json();
             
@@ -171,18 +155,10 @@ document.getElementById('csvUpload').addEventListener('change', async (e) => {
         document.getElementById('csvUpload').disabled = true;
 
         try {
-            const token = localStorage.getItem('token');
             const response = await fetch('/api/upload-csv/', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
-
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                window.location.href = 'login.html';
-                return;
-            }
 
             if (response.ok) {
                 alert("Data processed successfully!");
@@ -210,17 +186,9 @@ document.getElementById('loadDemoBtn')?.addEventListener('click', async (e) => {
     btn.disabled = true;
 
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch('/api/load-demo-data', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
+            method: 'POST'
         });
-
-        if (response.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'login.html';
-            return;
-        }
 
         if (response.ok) {
             alert("Demo data loaded! The dashboard will now automatically update.");
@@ -238,11 +206,7 @@ document.getElementById('loadDemoBtn')?.addEventListener('click', async (e) => {
     }
 });
 
-// Logout Handler
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = 'login.html';
-});
+
 
 // Load everything
 document.addEventListener('DOMContentLoaded', fetchData);
